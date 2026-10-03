@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Portal de Estudos · Arquiteto de Soluções com IA</title>
+<meta name="theme-color" content="#000000">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Curso IA">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icons/favicon-32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:dark;
+  --bg:#000; --s1:#0a0a0f; --s2:#13131b; --s3:#1c1c27; --line:#242431;
+  --text:#f5f5fa; --muted:#a0a0b6;
+  --yellow:#fbbf24; --ok:#34d399; --bad:#fb7185;
+  --c:#22d3ee; --c2:#3b82f6;
+  --font-d:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
+  --font-b:'IBM Plex Sans','Segoe UI',system-ui,sans-serif;
+}
+@property --p{syntax:'<number>'; inherits:false; initial-value:0;}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 72px);}
+html,body{margin:0;}
+body{
+  background:#000;
+  background-image:
+    radial-gradient(55% 38% at 8% -6%, rgba(255,90,95,.16), transparent 62%),
+    radial-gradient(50% 34% at 100% 2%, rgba(34,211,238,.13), transparent 62%),
+    radial-gradient(50% 36% at 55% 112%, rgba(192,132,252,.12), transparent 62%);
+  background-attachment:fixed;
+  color:var(--text); font-family:var(--font-b); font-size:16px; line-height:1.6; min-height:100vh;
+}
+h1,h2,h3,h4{font-family:var(--font-d); letter-spacing:-.01em; line-height:1.15; margin:0;}
+button{font-family:inherit; cursor:pointer;}
+[role=button]{cursor:pointer;}
+:focus-visible{outline:3px solid var(--yellow); outline-offset:2px;}
+
+/* ---------- Topo ---------- */
+.top{position:sticky; top:env(safe-area-inset-top,0px); z-index:30; background:rgba(0,0,0,.72); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border-bottom:1px solid var(--line);}
+.top-in{display:flex; align-items:center; gap:12px; padding:10px 16px; max-width:1280px; margin:0 auto;}
+.logo{display:flex; align-items:center; gap:10px; background:none; border:0; color:var(--text); padding:0;}
+.logo i{font-style:normal; width:38px; height:38px; border-radius:12px; display:grid; place-items:center; font-size:20px; background:conic-gradient(from 200deg,#ff5a5f,#fbbf24,#4ade80,#22d3ee,#c084fc,#ff5a5f); box-shadow:0 0 18px -4px #c084fc; transition:transform .5s;}
+.logoimg{width:44px; height:44px; flex:none; filter:drop-shadow(0 0 10px rgba(192,132,252,.45)); transition:transform .4s;}
+.logo:hover .logoimg{transform:scale(1.1);}
+.title{font-family:var(--font-d); font-weight:800; font-size:18px; white-space:nowrap;}
+.pbar{flex:1; min-width:70px; height:10px; background:var(--s2); border:1px solid var(--line); border-radius:99px; overflow:hidden;}
+.pbar > i{display:block; height:100%; width:0; border-radius:99px; background:linear-gradient(90deg,#ff5a5f,#fbbf24,#4ade80,#22d3ee,#c084fc,#ff5a5f); background-size:200% 100%; animation:slide 4s linear infinite; transition:width .8s cubic-bezier(.2,.8,.2,1); box-shadow:0 0 12px rgba(251,191,36,.5);}
+@keyframes slide{to{background-position:-200% 0;}}
+.plabel{font-size:13px; color:var(--muted); white-space:nowrap; font-weight:500;}
+.btn-tool{border:1px solid color-mix(in srgb,var(--yellow) 60%,transparent); background:color-mix(in srgb,var(--yellow) 12%,#000); color:var(--yellow); border-radius:12px; padding:7px 13px; font-weight:600; font-size:14px; white-space:nowrap; transition:transform .2s, box-shadow .2s;}
+.btn-tool:hover{transform:translateY(-2px); box-shadow:0 8px 24px -10px var(--yellow);}
+
+/* ---------- Layout ---------- */
+.app{display:grid; grid-template-columns:316px minmax(0,1fr); gap:24px; max-width:1280px; margin:0 auto; padding:20px 16px 70px;}
+.sb{align-self:start; position:sticky; top:calc(env(safe-area-inset-top,0px) + 74px); background:rgba(10,10,15,.9); border:1px solid var(--line); border-radius:20px; padding:12px; max-height:calc(100vh - 100px); overflow:auto;}
+.homebtn{display:flex; align-items:center; gap:10px; width:100%; border:0; background:transparent; color:var(--text); padding:10px 12px; border-radius:12px; font-family:var(--font-d); font-weight:700; font-size:15px; margin-bottom:6px;}
+.homebtn:hover,.homebtn.cur{background:var(--s2);}
+.homebtn .hi{width:32px; height:32px; border-radius:10px; display:grid; place-items:center; background:linear-gradient(135deg,#ff5a5f,#fbbf24); font-size:16px;}
+.mod{--p:0; margin:6px 0 8px; padding:10px 6px 8px; border-radius:16px; background:linear-gradient(180deg,color-mix(in srgb,var(--c) 9%,#000),transparent);}
+.modh{display:flex; align-items:center; gap:10px; margin-bottom:6px;}
+.ring{width:48px; height:48px; border-radius:50%; flex:none; display:grid; place-items:center; position:relative; background:conic-gradient(var(--c) calc(var(--p)*1%), #262633 0); transition:--p .8s ease;}
+.ring::before{content:""; position:absolute; inset:4px; border-radius:50%; background:#050508;}
+.modic{position:relative; font-size:21px; line-height:1; transition:transform .3s;}
+.mod:hover .modic{transform:scale(1.2) rotate(-8deg);}
+.modt{font-family:var(--font-d); font-weight:700; font-size:15px; line-height:1.2; flex:1;}
+.mods{font-size:12px; color:var(--c); font-weight:500; font-family:var(--font-b);}
+.modtool{border:0; background:linear-gradient(135deg,#fbbf24,#f59e0b); color:#1c1400; border-radius:10px; width:34px; height:34px; font-size:16px; flex:none; transition:transform .2s;}
+.modtool:hover:not([disabled]){transform:scale(1.12) rotate(-6deg);}
+.modtool[disabled]{background:var(--s2); color:var(--muted); cursor:not-allowed; opacity:.7;}
+.les{display:flex; align-items:center; gap:9px; width:100%; text-align:left; border:0; border-left:3px solid transparent; background:transparent; color:var(--text); padding:8px 10px; border-radius:0 10px 10px 0; font-size:14px; line-height:1.3;}
+.les:hover:not([disabled]){background:var(--s2);}
+.les[disabled]{color:var(--muted); cursor:not-allowed; opacity:.65;}
+.les.cur{background:color-mix(in srgb,var(--c) 18%,#000); border-left-color:var(--c); font-weight:600;}
+.les .st{flex:none; width:22px; text-align:center;}
+.reset{margin-top:10px; width:100%; border:1px solid var(--line); background:transparent; color:var(--muted); border-radius:10px; padding:7px; font-size:12px;}
+
+/* ---------- Início ---------- */
+.main{min-width:0;}
+.hero{display:grid; grid-template-columns:1fr auto; gap:20px; align-items:center; padding:28px; border-radius:24px; border:1px solid var(--line); background:radial-gradient(70% 120% at 100% 0%, rgba(192,132,252,.22), transparent 60%), radial-gradient(60% 100% at 0% 100%, rgba(255,90,95,.18), transparent 60%), var(--s1); margin-bottom:18px;}
+.hh{font-size:clamp(28px,5vw,44px); font-weight:800; margin-bottom:8px;}
+.hp{color:var(--muted); margin:0 0 14px; max-width:46ch;}
+.chips{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px;}
+.chip{background:var(--s2); border:1px solid var(--line); border-radius:99px; padding:5px 12px; font-size:14px; font-weight:500;}
+.bigring{--p:0; width:164px; height:164px; border-radius:50%; display:grid; place-items:center; position:relative; background:conic-gradient(#ff5a5f, #fbbf24 calc(var(--p)*.35%), #4ade80 calc(var(--p)*.65%), #22d3ee calc(var(--p)*1%), #262633 0); transition:--p 1.2s cubic-bezier(.2,.8,.2,1); box-shadow:0 0 50px -12px #22d3ee;}
+.bigring::before{content:""; position:absolute; inset:12px; border-radius:50%; background:#050508;}
+.bigin{position:relative; text-align:center;}
+.bigin b{display:block; font-family:var(--font-d); font-size:38px; font-weight:800;}
+.bigin span{font-size:13px; color:var(--muted);}
+.grid{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+.mc{--p:0; position:relative; overflow:hidden; border-radius:22px; padding:18px; border:1px solid color-mix(in srgb,var(--c) 45%,#16161e); background:linear-gradient(155deg,color-mix(in srgb,var(--c) 24%,#050507),#050507 64%); transition:transform .25s, box-shadow .25s; display:flex; flex-direction:column; gap:12px; min-height:210px;}
+.mc:hover{transform:translateY(-5px); box-shadow:0 18px 44px -18px var(--c);}
+.mc:active{transform:scale(.98);}
+.mtile{width:68px; height:68px; border-radius:20px; display:grid; place-items:center; font-size:34px; background:linear-gradient(135deg,var(--c),var(--c2)); box-shadow:0 10px 30px -8px var(--c); animation:float 4s ease-in-out infinite; animation-delay:var(--d,0s); transition:transform .3s;}
+.mc:hover .mtile{transform:rotate(-8deg) scale(1.1);}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+.mc h3{font-size:14px; color:var(--c); font-weight:600; font-family:var(--font-b);}
+.mt{font-family:var(--font-d); font-size:22px; font-weight:800; line-height:1.15;}
+.ms{color:var(--muted); font-size:14px;}
+.mdots{display:flex; gap:6px; margin-top:auto;}
+.mdots i{flex:1; height:6px; border-radius:99px; background:#262633;}
+.mdots i.on{background:linear-gradient(90deg,var(--c),var(--c2)); box-shadow:0 0 10px -1px var(--c);}
+.mfoot{display:flex; justify-content:space-between; font-size:14px; color:var(--muted);}
+.mst{font-weight:600; color:var(--text);}
+.mc.lock{filter:grayscale(.85); opacity:.62;}
+.mc.lock:hover{transform:none; box-shadow:none;}
+.mc.fin .mst{color:var(--ok);}
+
+/* ---------- Lição ---------- */
+.lh{display:flex; align-items:center; gap:16px; margin-bottom:12px;}
+.ltile{width:76px; height:76px; border-radius:24px; flex:none; display:grid; place-items:center; font-size:40px; background:linear-gradient(135deg,var(--c),var(--c2)); box-shadow:0 14px 36px -10px var(--c); animation:float 4s ease-in-out infinite; border:0; color:inherit;}
+.ltile.spin{animation:spin .7s ease;}
+@keyframes spin{to{transform:rotate(360deg) scale(1.15);}}
+.crumb{font-size:14px; color:var(--c); margin-bottom:4px; font-weight:600;}
+.h1{font-size:clamp(26px,5vw,40px); font-weight:800;}
+.dots{display:flex; gap:8px; margin:0 0 18px;}
+.dots i{flex:1; height:6px; border-radius:99px; background:#262633;}
+.dots i.on{background:var(--c);}
+.dots i.now{background:linear-gradient(90deg,var(--c),var(--c2)); animation:glow 1.8s ease-in-out infinite;}
+@keyframes glow{50%{box-shadow:0 0 14px var(--c);}}
+.card{background:var(--s1); border:1px solid var(--line); border-radius:18px; padding:18px 20px; margin-bottom:14px;}
+.card h3{font-size:19px; margin-bottom:8px; font-weight:700;}
+.card p{margin:0 0 8px; max-width:68ch;}
+.card p:last-child{margin-bottom:0;}
+.analogy{border-color:color-mix(in srgb,var(--c) 55%,transparent); background:linear-gradient(135deg,color-mix(in srgb,var(--c) 17%,#000),#050507 75%);}
+.term{background:var(--s1); border:1px dashed color-mix(in srgb,var(--c) 55%,transparent); border-radius:14px; padding:12px 16px; margin-bottom:14px; font-size:15px;}
+.term b{color:var(--c);}
+.why-chain{display:flex; flex-direction:column; gap:6px; margin:10px 0;}
+.why-chain div{background:var(--s2); border-radius:10px; padding:8px 12px; font-size:15px;}
+.why-chain div.root{background:color-mix(in srgb,var(--yellow) 14%,#000); color:#ffe9a8; font-weight:600; border:1px solid color-mix(in srgb,var(--yellow) 55%,transparent);}
+.golden{margin:8px 0 0; padding:0; list-style:none; counter-reset:g;}
+.golden li{counter-increment:g; display:flex; gap:10px; padding:7px 0;}
+.golden li::before{content:counter(g); flex:none; width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg,var(--c),var(--c2)); color:#000; display:grid; place-items:center; font-weight:800; font-size:14px;}
+.feyn{background:color-mix(in srgb,var(--yellow) 11%,#000); color:#ffe9a8; border:1px solid color-mix(in srgb,var(--yellow) 50%,transparent); border-radius:14px; padding:12px 16px; margin-bottom:14px;}
+.flows{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+.flow{border-radius:16px; padding:14px; border:1px solid var(--line); background:var(--s1);}
+.flow.old{border-color:color-mix(in srgb,var(--bad) 60%,transparent);}
+.flow.new{border-color:color-mix(in srgb,var(--ok) 60%,transparent);}
+.flow h4{font-size:16px; margin:0 0 10px; font-weight:700;}
+.node{background:var(--s2); border-radius:10px; padding:8px 10px; font-size:14px; line-height:1.35;}
+.node small{display:block; color:var(--muted);}
+.node.hot{background:color-mix(in srgb,var(--bad) 18%,#000); color:#ffc2cb; font-weight:600;}
+.node.good{background:color-mix(in srgb,var(--ok) 18%,#000); color:#b4f5da; font-weight:600;}
+.arrow{text-align:center; color:var(--muted); line-height:1.1; font-size:14px;}
+.pipe{display:flex; align-items:stretch; gap:8px; flex-wrap:wrap; margin:10px 0;}
+.pipe .node{flex:1; min-width:120px; text-align:center; transition:transform .2s;}
+.pipe .node:hover{transform:translateY(-3px);}
+.pipe .ar{align-self:center; color:var(--c); font-size:18px;}
+.node.ink{background:color-mix(in srgb,var(--c) 18%,#000); border:1px solid color-mix(in srgb,var(--c) 45%,transparent); font-weight:600;}
+.node.yel{background:color-mix(in srgb,var(--yellow) 14%,#000); border:1px solid color-mix(in srgb,var(--yellow) 55%,transparent); color:#ffe9a8; font-weight:600;}
+.tw{overflow-x:auto; margin:8px 0;}
+.tbl{width:100%; border-collapse:collapse; font-size:14px;}
+.tbl th,.tbl td{border:1px solid var(--line); padding:8px 10px; text-align:left; vertical-align:top;}
+.tbl th{background:var(--s2); font-family:var(--font-d);}
+.code{background:#040406; border:1px solid var(--line); border-radius:12px; padding:12px 14px; font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:13px; line-height:1.55; white-space:pre-wrap; word-break:break-word; margin:8px 0; color:#c7f7e4;}
+.calc{display:grid; grid-template-columns:1fr 1fr; gap:10px 18px;}
+.calc label{font-size:14px; display:block; font-weight:500;}
+.calc input[type=range]{width:100%; accent-color:var(--c);}
+.calc output{font-weight:700; color:var(--c);}
+.res{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:14px;}
+.res div{background:linear-gradient(135deg,color-mix(in srgb,var(--c) 22%,#000),#050507); border:1px solid color-mix(in srgb,var(--c) 40%,transparent); border-radius:14px; padding:10px 12px; text-align:center;}
+.res b{display:block; font-family:var(--font-d); font-size:22px; color:var(--c);}
+.res span{font-size:13px; color:var(--muted);}
+
+/* ---------- Desafio ---------- */
+.os{position:relative; background:linear-gradient(160deg,color-mix(in srgb,var(--yellow) 11%,#000),#050507 70%); border:1px solid color-mix(in srgb,var(--yellow) 65%,transparent); border-radius:20px; padding:22px 18px 18px; margin:26px 0 14px; box-shadow:0 0 40px -18px var(--yellow);}
+.os::before{content:"🎯 Desafio do Cliente"; position:absolute; top:-15px; left:16px; background:linear-gradient(135deg,#fbbf24,#f59e0b); color:#1c1400; font-family:var(--font-d); font-weight:800; font-size:14px; padding:4px 14px; border-radius:99px;}
+.os .who{font-weight:600; margin-bottom:6px; color:#ffe9a8;}
+.os .says{background:var(--s2); border-radius:14px; padding:10px 14px; font-style:italic; margin:8px 0 12px; border-left:4px solid var(--yellow);}
+.os .q{font-family:var(--font-d); font-weight:700; font-size:18px; margin:6px 0 12px;}
+.opt{display:flex; gap:12px; align-items:flex-start; width:100%; text-align:left; background:var(--s1); color:var(--text); border:1px solid var(--line); border-radius:14px; padding:12px 14px; margin-bottom:9px; font-size:15px; line-height:1.4; transition:transform .2s, border-color .2s, box-shadow .2s;}
+.opt:hover:not([disabled]){border-color:var(--c); transform:translateY(-2px) scale(1.01); box-shadow:0 10px 26px -14px var(--c);}
+.opt:active:not([disabled]){transform:scale(.98);}
+.opt .l{flex:none; width:30px; height:30px; border-radius:10px; display:grid; place-items:center; font-weight:800; font-family:var(--font-d); color:#000;}
+.opt .lA{background:#22d3ee;} .opt .lB{background:#c084fc;} .opt .lC{background:#fbbf24;}
+.opt.right{border-color:var(--ok); background:color-mix(in srgb,var(--ok) 15%,#000); box-shadow:0 0 28px -8px var(--ok);}
+.opt.wrong{border-color:var(--bad); background:color-mix(in srgb,var(--bad) 14%,#000);}
+.opt.shake{animation:shake .45s;}
+@keyframes shake{20%{transform:translateX(-8px);}40%{transform:translateX(8px);}60%{transform:translateX(-5px);}80%{transform:translateX(5px);}}
+.opt[disabled]{cursor:default;}
+.opt.dim{opacity:.45;}
+.fb{border-radius:14px; padding:12px 14px; margin:6px 0 10px; font-size:15px;}
+.fb.ok{background:color-mix(in srgb,var(--ok) 14%,#000); color:var(--ok); border:1px solid color-mix(in srgb,var(--ok) 60%,transparent);}
+.fb.no{background:color-mix(in srgb,var(--bad) 13%,#000); color:var(--bad); border:1px solid color-mix(in srgb,var(--bad) 60%,transparent);}
+.fb b{display:block; font-family:var(--font-d); font-size:17px; margin-bottom:2px;}
+.fb span{color:var(--text);}
+.fb.pop{animation:pop .4s ease;}
+@keyframes pop{from{transform:scale(.95); opacity:.3;} to{transform:scale(1); opacity:1;}}
+.next{display:inline-flex; align-items:center; gap:8px; background:linear-gradient(135deg,var(--c),var(--c2)); color:#000; border:0; border-radius:14px; padding:13px 22px; font-weight:800; font-size:16px; font-family:var(--font-d); box-shadow:0 12px 30px -12px var(--c); transition:transform .2s, filter .2s;}
+.next:hover{transform:translateY(-3px); filter:brightness(1.1);}
+.next:active{transform:scale(.97);}
+.next.alt{background:linear-gradient(135deg,#fbbf24,#f59e0b);}
+.soon{text-align:center; padding:34px 18px;}
+.done-box{text-align:center; padding:36px 18px; border:1px solid color-mix(in srgb,var(--ok) 60%,transparent); background:radial-gradient(60% 80% at 50% 0%, color-mix(in srgb,var(--ok) 22%,#000), #050507); border-radius:24px; margin-top:10px;}
+.done-box .trophy{font-size:64px; display:inline-block; animation:bounce 1.4s ease infinite;}
+@keyframes bounce{50%{transform:translateY(-12px) scale(1.08);}}
+.done-box h2{font-size:30px; color:var(--ok); margin:6px 0 8px; font-weight:800;}
+.done-box p{margin:0 auto 16px; max-width:52ch;}
+.done-box .row{display:flex; gap:10px; justify-content:center; flex-wrap:wrap;}
+
+/* ---------- Toolbox ---------- */
+.shade{position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:50; display:none;}
+.shade.on{display:block;}
+.drawer{position:fixed; top:0; right:0; bottom:0; width:min(640px,100%); z-index:60; background:#050508; border-left:1px solid color-mix(in srgb,var(--yellow) 60%,transparent); transform:translateX(100%); transition:transform .28s ease; display:flex; flex-direction:column; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);}
+.drawer.on{transform:none;}
+.dh{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:14px 18px; border-bottom:1px solid var(--line);}
+.dh h2{font-size:22px; font-weight:800;}
+.x{border:1px solid var(--line); background:var(--s2); color:var(--text); border-radius:10px; width:38px; height:38px; font-size:18px;}
+.tabs{display:flex; gap:8px; padding:10px 18px; overflow-x:auto; border-bottom:1px solid var(--line);}
+.tab{border:1px solid var(--line); background:var(--s2); color:var(--text); border-radius:99px; padding:6px 14px; font-size:14px; white-space:nowrap; font-weight:600;}
+.tab.on{background:linear-gradient(135deg,var(--c),var(--c2)); color:#000; border-color:transparent;}
+.tab[disabled]{opacity:.45; cursor:not-allowed;}
+.db{padding:16px 18px 30px; overflow:auto; flex:1;}
+.pr{border:1px solid var(--line); border-radius:16px; margin-bottom:14px; overflow:hidden; background:var(--s1);}
+.prh{display:flex; justify-content:space-between; align-items:center; gap:10px; padding:10px 14px; background:var(--s2);}
+.prh b{font-family:var(--font-d); font-size:16px;}
+.prd{padding:8px 14px 0; font-size:14px; color:var(--muted);}
+.cp{border:0; background:linear-gradient(135deg,var(--c),var(--c2)); color:#000; border-radius:10px; padding:6px 12px; font-size:13px; font-weight:800; white-space:nowrap;}
+.cp.done{background:var(--ok);}
+.pr pre{margin:8px 0 0; padding:12px 14px; background:#030305; font-size:13px; line-height:1.55; white-space:pre-wrap; word-break:break-word; font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; color:#d6d6e6; max-height:340px; overflow:auto;}
+.lockmsg{text-align:center; color:var(--muted); padding:30px 10px;}
+
+/* ---------- Extras ---------- */
+.confetti{position:fixed; inset:0; width:100%; height:100%; pointer-events:none; z-index:100;}
+.toast{position:fixed; left:50%; bottom:calc(env(safe-area-inset-bottom,0px) + 90px); transform:translate(-50%,20px); background:var(--s3); border:1px solid var(--line); color:var(--text); padding:10px 16px; border-radius:14px; z-index:90; opacity:0; transition:.25s; pointer-events:none; max-width:90vw; text-align:center; font-size:14px;}
+.toast.on{opacity:1; transform:translate(-50%,0);}
+.ov{display:none;}
+.bn{display:none;}
+
+@media (max-width: 900px){
+  .app{grid-template-columns:1fr; padding-top:14px; padding-bottom:100px;}
+  .sb{position:fixed; top:0; left:0; bottom:0; width:min(86vw,350px); max-height:none; z-index:45; border-radius:0 20px 20px 0; transform:translateX(-105%); transition:transform .25s ease; padding-top:calc(env(safe-area-inset-top,0px) + 14px);}
+  .sb.on{transform:none;}
+  .ov.on{display:block; position:fixed; inset:0; background:rgba(0,0,0,.65); z-index:40;}
+  .plabel{display:none;}
+  .title{font-size:15px;}
+  .flows,.calc,.grid{grid-template-columns:1fr;}
+  .res{grid-template-columns:1fr;}
+  .hero{grid-template-columns:1fr; padding:20px; text-align:left;}
+  .bigring{width:130px; height:130px;}
+  .btn-tool .tt{display:none;}
+  .bn{display:grid; grid-template-columns:repeat(3,1fr); position:fixed; left:0; right:0; bottom:0; z-index:35; background:rgba(0,0,0,.88); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border-top:1px solid var(--line); padding:6px 10px calc(env(safe-area-inset-bottom,0px) + 6px);}
+  .bn button{background:none; border:0; color:var(--muted); display:flex; flex-direction:column; align-items:center; gap:2px; font-size:12px; padding:4px; font-weight:600;}
+  .bn button span{font-size:22px; transition:transform .2s;}
+  .bn button:active span{transform:scale(1.3) rotate(-8deg);}
+  .bn button.on{color:var(--text);}
+  .ltile{width:62px; height:62px; font-size:32px; border-radius:20px;}
+}
+@media (prefers-reduced-motion: reduce){ *{animation:none!important; transition:none!important;} }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-in">
+    <button class="logo" data-act="home" aria-label="Ir para o início"><img class="logoimg" alt="" src="data:image/png;base64,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"><span class="title">Arquiteto de Soluções</span></button>
+    <div class="pbar" role="progressbar" aria-label="Progresso geral" id="pb-wrap"><i id="pb"></i></div>
+    <div class="plabel" id="pl">0 de 12 lições</div>
+    <button class="btn-tool" data-act="tool" aria-label="Abrir Code Toolbox">🧰 <span class="tt">Code Toolbox</span></button>
+  </div>
+</header>
+
+<div class="ov" id="ov" data-act="menu"></div>
+
+<div class="app">
+  <aside class="sb" id="sb" aria-label="Módulos e lições"></aside>
+  <main class="main" id="main"></main>
+</div>
+
+<nav class="bn" aria-label="Navegação">
+  <button data-act="home" id="bn-home"><span>🏠</span>Início</button>
+  <button data-act="menu" id="bn-menu"><span>📚</span>Lições</button>
+  <button data-act="tool" id="bn-tool"><span>🧰</span>Toolbox</button>
+</nav>
+
+<div class="shade" id="shade" data-act="toolclose"></div>
+<aside class="drawer" id="drawer" aria-label="Code Toolbox"></aside>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* ============ CONTEÚDO ============ */
+const MODULES = [
+  { id:1, icon:'🩺', title:'Diagnóstico da Dor', sub:'Mapear o problema', lessons:[
+    { id:'1.1', title:'A dor real do cliente', min:6,
+      body:[
+        `<div class="card analogy"><h3>🩺 Pense como um médico</h3><p>O paciente chega dizendo: <b>"preciso do remédio X"</b>. Quem diagnostica é o médico. O cliente também chega pedindo a solução (<i>"quero um app!"</i>), mas o que ele tem é um <b>sintoma</b> (<i>"perco 3 horas por dia refazendo planilha"</i>).</p></div>`,
+        `<div class="term"><b>Requisitos</b> = a lista do que o sistema precisa fazer. <b>Engenharia de requisitos</b> = descobrir essa lista conversando, antes de qualquer código.</div>`,
+        `<div class="card"><h3>Ferramenta 1: os 5 Porquês</h3><p>Pergunte "por quê?" até chegar na causa, não no sintoma.</p>
+          <div class="why-chain">
+            <div>"Quero um dashboard."</div>
+            <div>Por quê? → "Meu chefe cobra relatório."</div>
+            <div>Por que demora? → "Junto dados de 3 sistemas na mão."</div>
+            <div class="root">Dor real: dados espalhados, sem integração.</div>
+          </div></div>`,
+        `<div class="card"><h3>Ferramenta 2: as 3 perguntas de ouro</h3>
+          <ol class="golden"><li><span>Como você faz isso hoje, passo a passo?</span></li><li><span>Quanto tempo (e quantas vezes por semana) isso consome?</span></li><li><span>O que acontece se der errado?</span></li></ol></div>`,
+        `<div class="feyn"><b>🧒 Técnica Feynman:</b> explique a dor do cliente em 1 frase que uma criança de 10 anos entenderia. Se não conseguir, ainda não entendeu a dor.</div>`
+      ],
+      ch:{ who:'Dono de uma empresa de manutenção', says:'Preciso de um aplicativo para meus técnicos. Eles vivem esquecendo de preencher o relatório e eu fico louco no fim do mês.',
+        q:'Qual é o seu melhor primeiro passo como Arquiteto?',
+        opts:[
+          {t:'Abrir o Cursor e já desenhar as telas do app de relatório.', ok:false, why:'Isso é prescrever o remédio sem examinar o paciente. Você pode construir um app lindo para um problema que nem é de app (pode ser prazo, processo ou incentivo).'},
+          {t:'Perguntar como o relatório é feito hoje, quando e onde o técnico preenche, e o que acontece quando ele esquece.', ok:true, why:'É exatamente o diagnóstico: processo atual, momento do esquecimento e consequência. As 3 perguntas de ouro vêm antes de qualquer solução.'},
+          {t:'Concluir que os técnicos precisam de treinamento e propor uma capacitação.', ok:false, why:'Isso é suposição. Você ainda não sabe se o problema é falta de treino, formulário confuso ou ausência de sinal no campo.'}
+        ]}},
+    { id:'1.2', title:'Processo atual vs. automatizado', min:7,
+      body:[
+        `<div class="card analogy"><h3>🗺️ Pense num GPS</h3><p>Antes de buscar um atalho, o GPS precisa saber onde você está. Desenhar o <b>processo atual</b> é marcar o ponto de partida. Só depois você traça a <b>rota nova</b> (o processo automatizado).</p></div>`,
+        `<div class="term"><b>Gargalo</b> = o ponto onde o processo trava ou perde tempo, como o gargalo de uma garrafa que limita a vazão da água.</div>`,
+        `<div class="flows">
+          <div class="flow old"><h4>Processo atual</h4>
+            <div class="node">Técnico anota no papel</div><div class="arrow">▼</div>
+            <div class="node">Tira foto e manda no WhatsApp</div><div class="arrow">▼</div>
+            <div class="node hot">Secretária digita na planilha<small>40 min por dia, com erros</small></div><div class="arrow">▼</div>
+            <div class="node">Gestor confere e cobra correções</div><div class="arrow">▼</div>
+            <div class="node">Relatório mensal montado à mão</div>
+          </div>
+          <div class="flow new"><h4>Processo automatizado</h4>
+            <div class="node">Técnico preenche no app (funciona offline)</div><div class="arrow">▼</div>
+            <div class="node good">Dados caem direto no Firebase<small>sem digitação</small></div><div class="arrow">▼</div>
+            <div class="node">PDF do relatório gerado sozinho</div><div class="arrow">▼</div>
+            <div class="node">Painel do gestor atualiza em tempo real</div>
+          </div>
+        </div>`,
+        `<div class="card" style="margin-top:14px"><h3>Como desenhar o seu</h3><p>Escreva cada passo como <b>quem faz → o quê → em qual ferramenta → quanto tempo leva</b>. Marque em vermelho o passo mais lento ou repetitivo: é o seu gargalo candidato.</p></div>`,
+        `<div class="feyn"><b>🧒 Técnica Feynman:</b> conte o fluxo acima como uma historinha de 4 frases, sem usar a palavra "sistema".</div>`
+      ],
+      ch:{ who:'Gestora de operações da mesma empresa', says:'Quero começar pelo painel bonito com todos os números do mês. Esse é o que o diretor vê!',
+        q:'Olhando o processo atual acima, o que você automatiza primeiro?',
+        opts:[
+          {t:'O painel mensal, porque é a parte mais visível para o diretor.', ok:false, why:'Um painel bonito em cima de dados digitados à mão e com erros só mostra erro mais rápido. Ataque a origem do dado antes da vitrine.'},
+          {t:'Trocar o WhatsApp por e-mail, para organizar melhor as fotos.', ok:false, why:'Trocar o canal não elimina o retrabalho. A secretária continuaria digitando tudo na planilha.'},
+          {t:'A digitação manual na planilha: o técnico passa a registrar direto no app e o dado nasce certo.', ok:true, why:'Esse é o gargalo: 40 min por dia, repetição e erro. Resolvendo na origem, o PDF e o painel passam a ser consequência natural.'}
+        ]}},
+    { id:'1.3', title:'ROI: quanto isso vale em horas', min:7,
+      body:[
+        `<div class="card analogy"><h3>🏠 Pense em reforma de casa</h3><p>Ninguém troca o telhado sem perguntar: <b>quanto custa</b> e <b>em quanto tempo a economia paga</b>? O ROI faz essa pergunta para a sua automação.</p></div>`,
+        `<div class="term"><b>ROI</b> (Retorno sobre o Investimento) = quanto você ganha comparado ao quanto gastou. <b>Payback</b> = em quantos meses o ganho cobre o custo.</div>`,
+        `<div class="card"><h3>A conta em 3 passos</h3>
+          <ol class="golden">
+            <li><span><b>Horas/mês</b> = pessoas × horas por dia × dias por semana × 4,33</span></li>
+            <li><span><b>Economia/mês</b> = horas/mês × valor da hora</span></li>
+            <li><span><b>Payback</b> = custo do projeto ÷ economia/mês</span></li>
+          </ol></div>`,
+        `<div class="card"><h3>🧮 Simulador: mexa nos números</h3>
+          <div class="calc">
+            <div><label>Pessoas no processo: <output id="o-p"></output><input type="range" id="c-p" min="1" max="10" value="1"></label></div>
+            <div><label>Horas por dia gastas: <output id="o-h"></output><input type="range" id="c-h" min="0.5" max="8" step="0.5" value="2"></label></div>
+            <div><label>Dias por semana: <output id="o-d"></output><input type="range" id="c-d" min="1" max="7" value="5"></label></div>
+            <div><label>Valor da hora (R$): <output id="o-v"></output><input type="range" id="c-v" min="10" max="200" step="5" value="30"></label></div>
+            <div style="grid-column:1/-1"><label>Custo do projeto (R$): <output id="o-k"></output><input type="range" id="c-k" min="500" max="30000" step="500" value="4000"></label></div>
+          </div>
+          <div class="res">
+            <div><b id="r-h">-</b><span>horas salvas por mês</span></div>
+            <div><b id="r-e">-</b><span>economia por mês</span></div>
+            <div><b id="r-p">-</b><span>payback</span></div>
+          </div></div>`,
+        `<div class="feyn"><b>🧒 Técnica Feynman:</b> convença um dono de empresa, em 2 frases e sem jargão, de que o projeto se paga sozinho.</div>`
+      ],
+      ch:{ who:'Dono da empresa de manutenção', says:'Uma secretária gasta 2 horas por dia, 5 dias por semana, só digitando relatórios. A hora dela custa R$ 30. Sua automação custa R$ 4.000. Isso compensa?',
+        q:'Use o simulador (valores já preenchidos). Em quanto tempo o projeto se paga?',
+        opts:[
+          {t:'Cerca de 3 meses.', ok:true, why:'2 h × 5 dias × 4,33 = 43,3 horas/mês. Vezes R$ 30 = cerca de R$ 1.300/mês. R$ 4.000 ÷ R$ 1.300 ≈ 3,1 meses. Depois disso, é economia líquida.'},
+          {t:'Cerca de 1 mês.', ok:false, why:'Para se pagar em 1 mês a economia teria de ser de R$ 4.000/mês. Aqui ela é de cerca de R$ 1.300/mês.'},
+          {t:'Cerca de 1 ano.', ok:false, why:'Seria o caso se a economia fosse de uns R$ 330/mês. Refaça: 43,3 horas/mês × R$ 30 dá cerca de R$ 1.300/mês.'}
+        ]}}
+  ]},
+  { id:2, icon:'🗄️', title:'Bancos de Dados', sub:'Onde os dados nascem e moram', lessons:[
+    { id:'2.1', title:'O que é um banco de dados', min:6,
+      body:[
+        `<div class="card analogy"><h3>🗃️ Pense no arquivo de uma empresa</h3><p>Imagine duas situações: uma <b>pilha de papéis</b> soltos em cima da mesa, ou um <b>arquivo organizado</b> com gavetas, etiquetas e um índice. O banco de dados é o arquivo organizado do seu app: guarda as informações para que não se percam quando o app é fechado.</p></div>`,
+        `<div class="card"><h3>Uma tabela é uma planilha com regras</h3>
+          <div class="tw"><table class="tbl"><tr><th>id</th><th>cliente</th><th>tecnico</th><th>status</th></tr>
+          <tr><td>101</td><td>Mercado Sol</td><td>Carlos</td><td>aberta</td></tr>
+          <tr><td>102</td><td>Clínica Vida</td><td>Marina</td><td>concluida</td></tr></table></div>
+          <p>Cada <b>linha</b> é um <b>registro</b> (uma ordem de serviço). Cada <b>coluna</b> é um <b>campo</b> (uma informação sobre ela).</p></div>`,
+        `<div class="term"><b>CRUD</b> = as 4 coisas que todo app faz com dados: <b>C</b>riar, <b>R</b>ler, <b>A</b>tualizar (Update) e <b>D</b>eletar. Quando você pede um "cadastro" ao Cursor, é CRUD.</div>`,
+        `<div class="card"><h3>Por que não deixar tudo em planilhas?</h3><p>Planilha vive no computador de quem criou. Com 3 pessoas editando, surgem 3 versões da verdade. O banco central resolve isso: <b>todo mundo lê e escreve no mesmo lugar</b>, ao mesmo tempo.</p></div>`,
+        `<div class="feyn"><b>🧒 Técnica Feynman:</b> explique para um colega o que é "registro" e "campo" usando o exemplo de uma agenda de telefones.</div>`
+      ],
+      ch:{ who:'Gestor de uma empresa de serviços', says:'Cada atendente tem sua planilha no próprio computador. Toda semana os números não batem e eu perco horas descobrindo qual está certa.',
+        q:'Qual é o principal ganho de levar esses dados para um banco de dados central?',
+        opts:[
+          {t:'O sistema fica visualmente mais bonito.', ok:false, why:'Aparência é papel da interface. O banco de dados cuida de onde e como a informação é guardada.'},
+          {t:'Uma única fonte da verdade: todos leem e escrevem no mesmo lugar, em tempo real.', ok:true, why:'Acabam as versões divergentes. Esse é o ganho central: um dado, um lugar, todos enxergando o mesmo.'},
+          {t:'Não será mais preciso fazer backup.', ok:false, why:'Backup continua sendo necessário. Um banco central também pode ser apagado por engano ou corrompido.'}
+        ]}},
+    { id:'2.2', title:'Firebase vs. Supabase', min:8,
+      body:[
+        `<div class="card analogy"><h3>📁 Pastas soltas vs. planilhas ligadas</h3><p><b>Firebase (Firestore)</b> funciona como <b>pastas suspensas</b>: cada documento é uma ficha completa, com os campos que precisar, guardada dentro de uma coleção.<br><b>Supabase</b> funciona como <b>planilhas ligadas por códigos</b>: tabelas rígidas que se relacionam entre si (ex.: a tabela de contratos aponta para a tabela de clientes).</p></div>`,
+        `<div class="term"><b>Relacional (SQL)</b> = tabelas ligadas por códigos, ótimo para cruzar dados. <b>Não-relacional (NoSQL)</b> = documentos flexíveis, ótimo para velocidade e mudanças de formato. <b>Chave estrangeira</b> = o código que liga uma tabela a outra.</div>`,
+        `<div class="tw"><table class="tbl"><tr><th></th><th>Firebase (Firestore)</th><th>Supabase</th></tr>
+          <tr><td><b>Modelo</b></td><td>Documentos em coleções</td><td>Tabelas relacionais (Postgres)</td></tr>
+          <tr><td><b>Brilha em</b></td><td>Apps móveis, tempo real, uso offline pronto no celular</td><td>Relatórios cruzados, muitas relações, somas e filtros complexos</td></tr>
+          <tr><td><b>Consultas</b></td><td>Simples e rápidas; cruzamentos complexos exigem mais planejamento</td><td>SQL completo, juntando tabelas à vontade</td></tr>
+          <tr><td><b>Atenção</b></td><td>Custo cresce com leituras e escritas; desenhe bem as consultas</td><td>Exige pensar a estrutura das tabelas desde o início</td></tr></table></div>`,
+        `<div class="card"><h3>Regra de bolso</h3><p>Não escolha pelo status da tecnologia. Escolha pelo <b>requisito do cliente</b>: precisa funcionar sem internet? Precisa cruzar muita informação em relatórios? A resposta aponta o caminho.</p></div>`,
+        `<div class="feyn"><b>🧒 Técnica Feynman:</b> explique a diferença entre os dois usando pastas suspensas e planilhas, sem citar "SQL".</div>`
+      ],
+      ch:{ who:'Dono de uma empresa de manutenção', says:'Meus técnicos trabalham em locais sem sinal de celular e precisam registrar a ordem de serviço lá mesmo. Quando voltar o sinal, tudo deve subir sozinho.',
+        q:'Qual caminho de banco de dados você recomenda?',
+        opts:[
+          {t:'Planilha em nuvem compartilhada, porque todo mundo já sabe usar.', ok:false, why:'Planilha em nuvem depende de internet para editar e não sincroniza bem o que foi feito offline.'},
+          {t:'Supabase, porque SQL é mais profissional.', ok:false, why:'"Mais profissional" não é requisito. Poderia funcionar, mas o modo offline exigiria bem mais trabalho de sua parte.'},
+          {t:'Firebase (Firestore), que já traz sincronização offline pronta nos apps de celular.', ok:true, why:'O requisito decisivo é trabalhar sem sinal e sincronizar depois. O Firestore guarda os dados no aparelho e sobe tudo quando a conexão volta.'}
+        ]}},
+    { id:'2.3', title:'Desenhando coleções para o Cursor', min:8,
+      body:[
+        `<div class="card analogy"><h3>📐 Planta baixa antes da obra</h3><p>Nenhum engenheiro manda levantar parede sem planta. Do mesmo jeito, antes de pedir o backend ao Cursor, você entrega a <b>planta dos dados</b>. Escopo claro gera código certo; escopo vago gera retrabalho.</p></div>`,
+        `<div class="card"><h3>Método em 4 passos</h3>
+          <ol class="golden">
+            <li><span><b>Liste os "substantivos"</b> do negócio: cliente, técnico, ordem de serviço, relatório.</span></li>
+            <li><span><b>Defina os campos</b> de cada um (nome, tipo, obrigatório ou não).</span></li>
+            <li><span><b>Ligue por ID</b>: uma OS guarda o <b>ID</b> do técnico, não o nome digitado.</span></li>
+            <li><span><b>Defina quem acessa o quê</b>: o técnico só vê as próprias OS.</span></li>
+          </ol></div>`,
+        `<div class="card"><h3>Exemplo de documento</h3><pre class="code">ordens_servico / os_101
+{
+  clienteId: "cli_55",
+  tecnicoId: "tec_08",
+  status: "aberta",
+  criadaEm: 2026-10-02,
+  descricao: "Troca de compressor"
+}</pre><div class="term" style="margin:8px 0 0"><b>ID</b> = código único e imutável de um registro. Nomes mudam e têm erro de grafia, IDs não.</div></div>`,
+        `<div class="feyn"><b>🧒 Técnica Feynman:</b> explique por que guardar o ID do técnico é melhor do que guardar o nome.</div>`
+      ],
+      ch:{ who:'Você, escrevendo o escopo para o Cursor', says:'Preciso registrar qual técnico atendeu cada ordem de serviço e depois listar todas as OS de um técnico.',
+        q:'Como a ordem de serviço deve guardar a informação do técnico?',
+        opts:[
+          {t:'Guardar o tecnicoId, que aponta para a coleção de técnicos.', ok:true, why:'O ID é único e estável. Se o técnico mudar de nome, você altera em um só lugar e todas as OS continuam corretas.'},
+          {t:'Digitar o nome do técnico em cada OS.', ok:false, why:'Nome digitado gera duplicação e erro de grafia ("Carlos" vs "Carlos S."). Listar as OS de um técnico viraria uma caça a variações.'},
+          {t:'Colocar tudo em um campo de texto gigante chamado "dados".', ok:false, why:'Sem campos separados você não consegue filtrar, ordenar nem validar. O Cursor também perde a precisão do escopo.'}
+        ]}}
+  ]},
+  { id:3, icon:'🔌', title:'APIs e Webhooks', sub:'Como os sistemas conversam', lessons:[
+    { id:'3.1', title:'APIs: o garçom do restaurante', min:7,
+      body:[
+        `<div class="card analogy"><h3>🍽️ Pense num restaurante</h3><p>Você (o app) não entra na cozinha (o sistema). Você faz o pedido ao <b>garçom</b> (a <b>API</b>), que leva até a cozinha e traz o prato pronto. A API é o intermediário com regras claras do que pode ser pedido.</p></div>`,
+        `<div class="pipe"><div class="node ink">App<small>faz o pedido</small></div><div class="ar">➜</div><div class="node yel">API<small>o garçom</small></div><div class="ar">➜</div><div class="node ink">Sistema<small>a cozinha</small></div></div>`,
+        `<div class="card"><h3>Vocabulário em linguagem de gente</h3>
+          <ol class="golden">
+            <li><span><b>Requisição (HTTP)</b>: o pedido que o app faz.</span></li>
+            <li><span><b>Endpoint</b>: o endereço específico do pedido, como a mesa 12.</span></li>
+            <li><span><b>Método</b>: GET para buscar, POST para enviar algo novo, PUT/PATCH para alterar, DELETE para apagar.</span></li>
+            <li><span><b>JSON</b>: o formato do "prato": texto organizado em chaves e valores.</span></li>
+            <li><span><b>Chave de API / token</b>: o crachá que prova que você pode pedir.</span></li>
+          </ol></div>`,
+        `<div class="card"><h3>Um pedido real</h3><pre class="code">GET /ordens/101
+Authorization: Bearer SEU_TOKEN
+
+Resposta 200 OK:
+{ "id": 101, "cliente": "Mercado Sol", "status": "aberta" }</pre>
+          <p><b>Códigos de resposta:</b> 200 = deu certo · 401 = crachá ausente ou inválido · 404 = endereço não existe · 500 = a cozinha pegou fogo (erro no servidor).</p></div>`,
+        `<div class="feyn"><b>🧒 Técnica Feynman:</b> explique o que é uma API usando só o restaurante, sem falar "programa".</div>`
+      ],
+      ch:{ who:'Seu app chamando o sistema do cliente', says:'A integração com o ERP começou a devolver o erro 401 ontem à noite. Ontem funcionava normalmente.',
+        q:'O que o erro 401 indica e por onde você começa a investigar?',
+        opts:[
+          {t:'O servidor do ERP caiu; é só esperar voltar.', ok:false, why:'Servidor fora do ar costuma aparecer como erro 5xx (500, 502, 503), não como 401.'},
+          {t:'Falha de autenticação: o token ou chave está ausente, errado ou expirou. Começo conferindo a credencial.', ok:true, why:'401 significa "não autorizado". Credenciais vencem e são trocadas, então conferir a chave é o primeiro passo.'},
+          {t:'O endpoint não existe mais; preciso procurar o novo endereço.', ok:false, why:'Endereço inexistente é o 404. O 401 diz que o endereço existe, mas você não provou quem é.'}
+        ]}},
+    { id:'3.2', title:'Webhooks: a campainha', min:6,
+      body:[
+        `<div class="card analogy"><h3>🔔 Campainha vs. espiar pela janela</h3><p>Esperando uma encomenda, você pode ir à porta a cada 5 minutos (isso se chama <b>polling</b>) ou esperar a <b>campainha</b> tocar. O <b>webhook</b> é a campainha: o outro sistema avisa na hora em que algo acontece.</p></div>`,
+        `<div class="pipe"><div class="node ink">Evento<small>pagamento aprovado</small></div><div class="ar">➜</div><div class="node yel">Webhook<small>a campainha</small></div><div class="ar">➜</div><div class="node ink">Seu sistema<small>libera o acesso</small></div></div>`,
+        `<div class="term"><b>Payload</b> = o conteúdo da mensagem que chega no webhook (o "bilhete" que o entregador deixa). <b>URL de destino</b> = o endereço da sua campainha, onde o aviso deve bater.</div>`,
+        `<div class="card"><h3>3 cuidados de quem constrói</h3>
+          <ol class="golden">
+            <li><span><b>Valide a assinatura</b>: confirme que o aviso veio de quem diz ser. Qualquer um pode bater na sua campainha.</span></li>
+            <li><span><b>Responda rápido</b> com 200 e processe depois, senão o remetente acha que falhou e reenvia.</span></li>
+            <li><span><b>Aceite repetição</b>: o mesmo aviso pode chegar duas vezes. Seu sistema não pode cobrar ou criar duas vezes.</span></li>
+          </ol></div>`,
+        `<div class="feyn"><b>🧒 Técnica Feynman:</b> explique a diferença entre polling e webhook com a história da encomenda.</div>`
+      ],
+      ch:{ who:'Dono de uma loja de cursos online', says:'Quero que o aluno receba o acesso segundos depois de pagar, sem ninguém precisar liberar na mão.',
+        q:'Como você faz o sistema ser avisado do pagamento?',
+        opts:[
+          {t:'Configurar um webhook no gateway de pagamento apontando para o meu fluxo.', ok:true, why:'Webhook entrega o aviso no instante do evento, sem gastar consultas e sem atraso.'},
+          {t:'Pedir ao aluno que envie o comprovante por e-mail.', ok:false, why:'Isso devolve o trabalho manual ao processo e atrasa a liberação.'},
+          {t:'Consultar a API do gateway de minuto em minuto.', ok:false, why:'Funciona, mas é polling: gasta consultas à toa e o aluno espera até um minuto. O webhook resolve melhor.'}
+        ]}},
+    { id:'3.3', title:'WhatsApp Business com botões', min:8,
+      body:[
+        `<div class="card analogy"><h3>🛎️ A recepção digital</h3><p>Pense na recepção de uma clínica: ela confirma a consulta e oferece opções ("confirmar, remarcar, cancelar"). A <b>API Oficial do WhatsApp Business</b> (da Meta) permite que o seu sistema faça essa recepção, com botões clicáveis no lugar de digitar.</p></div>`,
+        `<div class="card"><h3>As peças principais</h3>
+          <ol class="golden">
+            <li><span><b>Janela de 24 horas</b>: depois que o cliente fala com você, é possível responder livremente por 24 h.</span></li>
+            <li><span><b>Template (modelo) aprovado</b>: para <i>iniciar</i> uma conversa fora da janela, você usa uma mensagem pré-aprovada pela Meta.</span></li>
+            <li><span><b>Mensagens interativas</b>: botões de resposta (até 3) e listas de opções (até 10 itens).</span></li>
+            <li><span><b>Webhook de retorno</b>: quando o cliente toca num botão, o WhatsApp avisa seu sistema por webhook.</span></li>
+          </ol></div>`,
+        `<div class="card"><h3>Integrando um sistema antigo (legado)</h3><p>O sistema legado muitas vezes não "fala" com o WhatsApp. A ponte é um orquestrador (como o n8n, que você verá no próximo módulo):</p>
+          <div class="pipe"><div class="node">Sistema legado<small>agenda a visita</small></div><div class="ar">➜</div><div class="node yel">Orquestrador<small>n8n</small></div><div class="ar">➜</div><div class="node ink">API do WhatsApp<small>envia botões</small></div></div>
+          <div class="pipe"><div class="node ink">Cliente toca "Confirmar"</div><div class="ar">➜</div><div class="node yel">Webhook</div><div class="ar">➜</div><div class="node">Atualiza o legado</div></div></div>`,
+        `<div class="feyn"><b>🧒 Técnica Feynman:</b> explique por que um botão é melhor que pedir ao cliente "digite 1 para confirmar".</div>`
+      ],
+      ch:{ who:'Gerente de uma empresa de manutenção', says:'Quero avisar amanhã de manhã o cliente sobre a visita técnica e pedir confirmação. Ele não fala com a gente no WhatsApp há semanas.',
+        q:'O que você usa para iniciar essa conversa?',
+        opts:[
+          {t:'Um template de mensagem aprovado pela Meta, com botões Confirmar e Reagendar.', ok:true, why:'Fora da janela de 24 h, só é possível iniciar a conversa com template aprovado. Os botões de resposta rápida facilitam a confirmação.'},
+          {t:'Uma mensagem de texto livre pela API.', ok:false, why:'Texto livre só é permitido dentro da janela de 24 h após o cliente falar com você. Fora dela, a Meta bloqueia o envio.'},
+          {t:'Um robô não oficial ligado ao WhatsApp pessoal do técnico.', ok:false, why:'Automação não oficial viola as regras e pode banir o número. Em empresa, use sempre a API Oficial.'}
+        ]}}
+  ]},
+  { id:4, icon:'⚙️', title:'Orquestração com n8n', sub:'Automatizar sem código', lessons:[
+    { id:'4.1', title:'n8n: a linha de montagem', min:7,
+      body:[
+        `<div class="card analogy"><h3>🏭 Pense numa linha de montagem</h3><p>Uma fábrica tem uma esteira com estações: cada uma faz uma tarefa e passa o resultado adiante. O <b>n8n</b> é isso para dados: você liga <b>nós</b> (as estações) e o dado anda de um para o outro, sozinho.</p></div>`,
+        `<div class="pipe"><div class="node yel">Gatilho<small>quando começa</small></div><div class="ar">➜</div><div class="node ink">Nó: busca dados</div><div class="ar">➜</div><div class="node ink">Nó: decide (IF)</div><div class="ar">➜</div><div class="node ink">Nó: envia</div></div>`,
+        `<div class="term"><b>Nó (node)</b> = uma estação com uma tarefa. <b>Gatilho (trigger)</b> = o nó que dá a partida (um horário, um webhook, uma mensagem). <b>Fluxo (workflow)</b> = a linha inteira. <b>Execução</b> = cada vez que a esteira roda.</div>`,
+        `<div class="card"><h3>Onde o n8n roda?</h3>
+          <p><b>Nuvem do n8n:</b> pronto para usar, você paga mensalidade.<br><b>Servidor próprio (self-hosted):</b> você instala em uma máquina sua ou alugada, com mais controle sobre os dados e custo, mas assume manutenção e segurança.</p>
+          <p><b>Credenciais</b> (senhas e tokens) ficam guardadas em um cofre do próprio n8n, nunca escritas dentro do fluxo.</p></div>`,
+        `<div class="feyn"><b>🧒 Técnica Feynman:</b> descreva um fluxo do seu dia a dia como uma esteira de fábrica: gatilho, estações e resultado.</div>`
+      ],
+      ch:{ who:'Diretor de uma empresa de serviços', says:'Quero receber todo dia, às 7h da manhã, um resumo das ordens de serviço abertas, sem ninguém precisar montar.',
+        q:'Qual gatilho inicia esse fluxo?',
+        opts:[
+          {t:'Gatilho manual: eu clico no botão todo dia.', ok:false, why:'Isso mantém a tarefa dependente de alguém lembrar de clicar. O objetivo era eliminar isso.'},
+          {t:'Gatilho de webhook, esperando um aviso externo.', ok:false, why:'Webhook espera um evento de fora. Aqui o motivo da partida é o relógio, não um evento.'},
+          {t:'Gatilho de agendamento (Schedule), configurado para 7h todos os dias.', ok:true, why:'O Schedule Trigger dispara por horário. É o gatilho certo para rotinas diárias, semanais ou mensais.'}
+        ]}},
+    { id:'4.2', title:'Agentes de IA com memória e ferramentas', min:8,
+      body:[
+        `<div class="card analogy"><h3>🧑‍💼 Um estagiário esperto</h3><p>Um agente de IA é como um estagiário muito rápido: tem um <b>cérebro</b> (o modelo de linguagem), um <b>caderno</b> (a memória) e <b>ferramentas</b> (consultar o sistema, calcular, enviar mensagem). Sem ferramentas, ele só conversa. Com ferramentas, ele age.</p></div>`,
+        `<div class="term"><b>LLM</b> = o modelo de IA que entende e escreve texto. <b>Prompt de sistema</b> = a descrição do cargo do estagiário. <b>Memória</b> = o que ele lembra da conversa. <b>Tool (ferramenta)</b> = uma ação que ele pode chamar. <b>Alucinação</b> = quando ele inventa uma resposta que parece certa.</div>`,
+        `<div class="card"><h3>As peças do nó AI Agent no n8n</h3>
+          <div class="pipe"><div class="node yel">AI Agent</div></div>
+          <ol class="golden">
+            <li><span><b>Chat Model</b>: o cérebro (você escolhe o modelo e conecta a credencial).</span></li>
+            <li><span><b>Memory</b>: guarda as últimas mensagens para ele não "esquecer" o assunto.</span></li>
+            <li><span><b>Tools</b>: ferramentas como consultar uma API, buscar no banco ou chamar outro fluxo seu (Custom Tool).</span></li>
+          </ol></div>`,
+        `<div class="card"><h3>Regra de ouro contra invenção</h3><p>Nunca deixe o agente "adivinhar" dados do negócio. Dê a ele uma <b>ferramenta</b> que busca o dado real e instrua no prompt de sistema: <i>"responda apenas com o que a ferramenta retornar; se não encontrar, diga que não sabe e encaminhe a um humano"</i>.</p></div>`,
+        `<div class="feyn"><b>🧒 Técnica Feynman:</b> explique a diferença entre um chatbot só com cérebro e um agente com cérebro e ferramentas.</div>`
+      ],
+      ch:{ who:'Gerente de atendimento', says:'Nosso agente respondeu a um cliente que a ordem de serviço dele estava "em rota", mas essa OS nem existe no sistema. Ele inventou.',
+        q:'Qual é a correção mais segura?',
+        opts:[
+          {t:'Pedir no prompt que ele seja mais criativo e confiante.', ok:false, why:'Mais criatividade aumenta a chance de invenção. É o oposto do que você precisa.'},
+          {t:'Dar a ele uma ferramenta que consulta a OS real e instruí-lo a responder só com o que ela devolver.', ok:true, why:'O dado passa a vir do sistema, não da "imaginação" do modelo. E, se a ferramenta não achar a OS, o agente deve dizer que não encontrou.'},
+          {t:'Apenas trocar por um modelo de IA maior.', ok:false, why:'Modelo maior pode errar menos, mas sem acesso ao dado real continua podendo inventar. O problema é falta de ferramenta e de regra.'}
+        ]}},
+    { id:'4.3', title:'Rotinas de segundo plano', min:8,
+      body:[
+        `<div class="card analogy"><h3>🧹 O zelador noturno</h3><p>Enquanto todos dormem, o zelador limpa, confere portas e guarda tudo no lugar. As <b>rotinas em segundo plano</b> fazem o mesmo com os seus dados: backups, relatórios e conferências, sem ninguém pedir.</p></div>`,
+        `<div class="card"><h3>Receita: backup diário compactado</h3>
+          <div class="pipe"><div class="node yel">Schedule<small>todo dia às 2h</small></div><div class="ar">➜</div><div class="node ink">Lê os dados<small>banco ou API</small></div><div class="ar">➜</div><div class="node ink">Compacta<small>arquivo .zip</small></div><div class="ar">➜</div><div class="node ink">Guarda<small>Drive ou nuvem</small></div></div></div>`,
+        `<div class="card"><h3>Receita: relatório automático</h3>
+          <div class="pipe"><div class="node yel">Schedule<small>7h, dias úteis</small></div><div class="ar">➜</div><div class="node ink">Busca OS abertas</div><div class="ar">➜</div><div class="node ink">Monta o resumo</div><div class="ar">➜</div><div class="node ink">Envia por e-mail ou WhatsApp</div></div></div>`,
+        `<div class="card"><h3>O que separa rotina amadora de profissional</h3>
+          <ol class="golden">
+            <li><span><b>Aviso de falha</b>: um fluxo de erro que te alerta quando algo quebra.</span></li>
+            <li><span><b>Teste antes de agendar</b>: rode manualmente e confira o resultado.</span></li>
+            <li><span><b>Nome com data</b>: backup_2026-10-02.zip, para achar o arquivo certo depois.</span></li>
+            <li><span><b>Teste de restauração</b>: um backup só vale se você já provou que consegue restaurar.</span></li>
+          </ol></div>`,
+        `<div class="feyn"><b>🧒 Técnica Feynman:</b> explique por que um backup que nunca foi testado é só uma esperança.</div>`
+      ],
+      ch:{ who:'Dono de uma empresa', says:'O backup noturno falhou por 3 dias seguidos e ninguém percebeu. Só descobrimos quando precisamos restaurar um arquivo.',
+        q:'O que você adiciona ao fluxo para isso não se repetir?',
+        opts:[
+          {t:'Um fluxo de erro (Error Trigger) que avisa por WhatsApp ou e-mail sempre que o backup falhar.', ok:true, why:'Falhas silenciosas são o maior risco de rotinas automáticas. O alerta transforma o erro em um aviso imediato.'},
+          {t:'Rodar o backup 3 vezes mais por dia.', ok:false, why:'Mais execuções não resolvem se ninguém é avisado quando elas falham.'},
+          {t:'Desligar o backup automático e voltar a fazer manualmente.', ok:false, why:'Manual depende de memória e disciplina. O correto é manter a automação e adicionar monitoramento.'}
+        ]}}
+  ]}
+];
+
+const MODDONE = {
+  1:'Você já sabe extrair a dor real, desenhar o fluxo e provar o ROI.',
+  2:'Você já sabe escolher entre Firebase e Supabase e desenhar a planta dos dados para o Cursor.',
+  3:'Você já entende APIs, webhooks e como ligar um sistema antigo ao WhatsApp Business.',
+  4:'Curso completo! Você já sabe orquestrar fluxos, criar agentes de IA com ferramentas e manter rotinas confiáveis.'
+};
+
+const REGRA = 'Regra de execução: particione o trabalho em etapas pequenas e isoladas; não modifique, não refatore e não reformate nenhuma parte já validada do projeto; ao final, liste exatamente quais arquivos foram criados ou alterados.';
+
+const PROMPTS = {
+  1: [
+    { title:'Template de diagnóstico do cliente', desc:'Cria o documento padrão para registrar dor real, processo atual e resultado esperado.',
+      text:[
+'Atue como Engenheiro de Software Sênior.',
+'',
+'Contexto: estou levantando requisitos para um cliente do setor [SETOR]. A dor informada por ele é: "[DOR DECLARADA PELO CLIENTE]".',
+'',
+'Objetivo: criar o arquivo docs/DIAGNOSTICO.md como template reutilizável de diagnóstico, com as seções:',
+'1. Dor declarada vs. dor real (técnica dos 5 Porquês)',
+'2. Processo atual passo a passo (quem, o quê, ferramenta, tempo gasto)',
+'3. Frequência e volume (vezes por semana)',
+'4. Impacto quando dá errado',
+'5. Resultado esperado e mensurável',
+'6. Premissas e riscos',
+'7. Critérios de aceite',
+'',
+'Requisitos: português objetivo; tabelas Markdown onde fizer sentido; campos em branco marcados com [PREENCHER]; não criar código e não alterar outros arquivos.',
+'',
+REGRA].join('\n') },
+    { title:'Fluxos Atual vs. Automatizado (Mermaid)', desc:'Gera os dois fluxogramas lado a lado para apresentar ao cliente.',
+      text:[
+'Atue como Engenheiro de Software Sênior e analista de processos.',
+'',
+'Contexto: o processo atual do cliente é o seguinte: [DESCREVER PASSOS ATUAIS, UM POR LINHA, COM TEMPO GASTO].',
+'',
+'Objetivo: criar o arquivo docs/FLUXOS.md contendo dois diagramas em Mermaid (flowchart TD):',
+'1. Processo atual (AS-IS), destacando em vermelho o gargalo principal.',
+'2. Processo automatizado proposto (TO-BE), destacando em verde as etapas eliminadas ou automatizadas.',
+'',
+'Ao final do arquivo, inclua uma tabela comparando: número de etapas, tempo estimado por ciclo e pontos de falha, antes e depois.',
+'',
+'Restrições: não criar código de aplicação e não alterar outros arquivos.',
+'',
+REGRA].join('\n') },
+    { title:'Calculadora de ROI no app', desc:'Escopo para uma tela de cálculo de horas economizadas e payback.',
+      text:[
+'Atue como Engenheiro de Software Full-Stack Sênior.',
+'',
+'Contexto: projeto em [STACK DO PROJETO, ex.: Flutter]. Preciso de uma ferramenta interna para demonstrar o ROI de uma automação a clientes.',
+'',
+'Objetivo: implementar a tela "Calculadora de ROI" com os campos: número de pessoas, horas por dia, dias por semana, valor da hora (R$) e custo do projeto (R$).',
+'',
+'Regras de cálculo (isoladas em uma função pura e testável):',
+'- horasMes = pessoas x horasDia x diasSemana x 4,33',
+'- economiaMes = horasMes x valorHora',
+'- paybackMeses = custoProjeto / economiaMes (tratar divisão por zero)',
+'',
+'Saída em tempo real: horas salvas por mês, economia mensal em R$ e payback em meses. Formatar valores no padrão pt-BR.',
+'',
+'Critérios de aceite: função de cálculo coberta por testes unitários (caso base: 1 pessoa, 2 h/dia, 5 dias, R$ 30/h, projeto de R$ 4.000 resulta em payback aproximado de 3,1 meses); sem alterar telas ou módulos existentes.',
+'',
+REGRA].join('\n') }
+  ],
+  2: [
+    { title:'Modelo de dados do Firestore', desc:'Gera a planta dos dados (coleções, campos e relações) antes de qualquer código.',
+      text:[
+'Atue como Arquiteto de Dados Sênior, especialista em Firebase Firestore.',
+'',
+'Contexto: o sistema atende [DESCREVER O NEGÓCIO EM 2 FRASES]. As entidades principais são: [LISTAR: ex. clientes, técnicos, ordens de serviço, relatórios].',
+'',
+'Objetivo: criar o arquivo docs/MODELO_DADOS.md com o modelo completo, contendo para cada coleção:',
+'1. Nome da coleção e finalidade',
+'2. Tabela de campos (nome, tipo, obrigatório, descrição, exemplo)',
+'3. Relações entre coleções, sempre por ID (nunca por nome digitado)',
+'4. Consultas mais frequentes e índices necessários',
+'5. Um documento de exemplo em JSON',
+'',
+'Restrições: não escrever código de aplicação, não criar regras de segurança nesta etapa e não alterar outros arquivos.',
+'',
+REGRA].join('\n') },
+    { title:'Regras de segurança do Firestore', desc:'Define quem pode ler e escrever em cada coleção, por perfil de usuário.',
+      text:[
+'Atue como Engenheiro de Segurança Sênior, com foco em Firebase.',
+'',
+'Contexto: o modelo de dados está documentado em docs/MODELO_DADOS.md. Os perfis de usuário são: [ex. admin, gestor, técnico de campo].',
+'',
+'Objetivo: propor o arquivo firestore.rules aplicando o princípio do menor privilégio:',
+'- Nenhum acesso para usuários não autenticados.',
+'- [PERFIL TÉCNICO]: lê e escreve apenas documentos em que o campo tecnicoId seja igual ao seu uid.',
+'- [PERFIL ADMIN]: leitura e escrita completas.',
+'- Validação dos campos obrigatórios e dos tipos nas escritas.',
+'',
+'Entregáveis: o arquivo de regras, comentários explicando cada bloco e uma lista de casos de teste (permitido e negado) para validar no emulador. Não publicar (deploy) nada.',
+'',
+REGRA].join('\n') },
+    { title:'Camada de acesso a dados (CRUD)', desc:'Cria a classe que cria, lê, atualiza e apaga registros de uma coleção.',
+      text:[
+'Atue como Engenheiro de Software Sênior em [STACK DO PROJETO, ex.: Flutter + Firebase].',
+'',
+'Objetivo: implementar um repositório para a coleção [NOME DA COLEÇÃO] seguindo o modelo em docs/MODELO_DADOS.md, com os métodos: criar, buscarPorId, listarPorStatus, atualizar e remover.',
+'',
+'Requisitos:',
+'- Modelo tipado com conversão de e para o formato do Firestore.',
+'- Tratamento de erros com mensagens claras e sem expor detalhes internos.',
+'- Testes unitários usando um banco falso ou mock, cobrindo o caminho feliz e um caso de erro por método.',
+'- Nenhuma alteração de interface nem de outros repositórios.',
+'',
+REGRA].join('\n') }
+  ],
+  3: [
+    { title:'Cliente de API (HTTP) robusto', desc:'Camada única para chamar APIs externas com autenticação e tratamento de erros.',
+      text:[
+'Atue como Engenheiro de Software Sênior em [STACK DO PROJETO].',
+'',
+'Contexto: preciso integrar com a API [NOME DO SISTEMA] cuja documentação está em [URL DA DOCUMENTAÇÃO].',
+'',
+'Objetivo: criar um serviço de API (ApiClient) com:',
+'- URL base e token lidos de variáveis de ambiente (nunca fixos no código).',
+'- Timeout e nova tentativa limitada para falhas temporárias.',
+'- Tratamento explícito: 401 (credencial inválida), 404 (não encontrado), 429 (limite de uso) e 5xx (erro do servidor), cada um com mensagem e tipo de erro próprios.',
+'- Conversão da resposta JSON para modelos tipados.',
+'- Testes com respostas simuladas para cada código de status acima.',
+'',
+REGRA].join('\n') },
+    { title:'Receptor seguro de webhook', desc:'Endpoint que recebe avisos de outros sistemas com validação e proteção contra duplicidade.',
+      text:[
+'Atue como Engenheiro de Backend Sênior.',
+'',
+'Contexto: o serviço [NOME DO SISTEMA EXTERNO] enviará webhooks para o nosso sistema quando o evento [EVENTO] ocorrer.',
+'',
+'Objetivo: criar o endpoint receptor (ex.: Cloud Function) que:',
+'1. Valida a assinatura do webhook usando um segredo guardado em variável de ambiente.',
+'2. Responde 200 imediatamente e delega o processamento.',
+'3. Garante idempotência: o mesmo evento recebido duas vezes não pode gerar duas ações (usar o ID do evento).',
+'4. Registra log de cada evento recebido, sem gravar dados sensíveis.',
+'5. Rejeita com 401 qualquer requisição com assinatura inválida.',
+'',
+'Entregar também testes para: assinatura válida, assinatura inválida e evento duplicado.',
+'',
+REGRA].join('\n') },
+    { title:'Especificação do fluxo WhatsApp com botões', desc:'Documento de escopo do fluxo de confirmação com templates e mensagens interativas.',
+      text:[
+'Atue como Arquiteto de Soluções Sênior, especialista em WhatsApp Business Platform (API Oficial da Meta).',
+'',
+'Contexto: queremos que o sistema [NOME DO SISTEMA] avise o cliente sobre [EVENTO, ex.: visita técnica agendada] e receba a resposta por botões.',
+'',
+'Objetivo: criar o arquivo docs/FLUXO_WHATSAPP.md contendo:',
+'1. Texto do template de abertura (para conversas fora da janela de 24 h) e seus botões de resposta rápida: [BOTÕES, máximo 3].',
+'2. Mensagens de resposta dentro da janela de 24 h para cada botão tocado.',
+'3. Formato esperado do webhook de retorno e quais campos serão lidos.',
+'4. Máquina de estados (diagrama Mermaid): pendente, confirmada, reagendar, cancelada, sem resposta.',
+'5. Regras de exceção: cliente não responde, número inválido, opt-out.',
+'',
+'Restrições: apenas documentação; não escrever código nesta etapa.',
+'',
+REGRA].join('\n') }
+  ],
+  4: [
+    { title:'Especificação de fluxo n8n', desc:'Documento que descreve cada nó do fluxo antes de montá-lo no n8n.',
+      text:[
+'Atue como Arquiteto de Automações Sênior, especialista em n8n.',
+'',
+'Contexto: preciso automatizar o processo [DESCREVER O PROCESSO].',
+'',
+'Objetivo: criar o arquivo docs/N8N_FLUXOS.md especificando o fluxo, nó a nó, em uma tabela com as colunas: ordem, tipo de nó, finalidade, entrada, saída, credencial necessária e tratamento de erro.',
+'',
+'Incluir: o gatilho (Schedule ou Webhook) com justificativa, um diagrama Mermaid do fluxo, um fluxo secundário com Error Trigger para alertas de falha, e um checklist de teste com execução manual antes de agendar.',
+'',
+'Restrições: não colocar senhas ou tokens no documento; apenas nomes das credenciais.',
+'',
+REGRA].join('\n') },
+    { title:'Prompt de sistema do agente de IA', desc:'Redige as instruções do agente de atendimento com regras anti-invenção.',
+      text:[
+'Atue como Engenheiro de Prompts Sênior.',
+'',
+'Contexto: o agente de IA atenderá clientes da empresa [NOME] pelo canal [WHATSAPP/SITE], usando o n8n com as ferramentas: [LISTAR: ex. consultar_os, abrir_chamado].',
+'',
+'Objetivo: escrever o prompt de sistema em docs/PROMPT_AGENTE.md contendo:',
+'1. Papel, tom de voz e idioma do agente.',
+'2. Regra obrigatória: responder dados do negócio somente com o retorno das ferramentas; se a ferramenta não encontrar, dizer que não localizou, sem inventar.',
+'3. Quando e como encaminhar a um atendente humano.',
+'4. Limites: o que o agente nunca deve fazer (ex.: prometer prazos, informar valores não consultados).',
+'5. Cinco exemplos de conversa (dois casos de sucesso, dois de não encontrado e um de encaminhamento).',
+'',
+REGRA].join('\n') },
+    { title:'Rotina de backup e relatório diário', desc:'Escopo de uma rotina agendada que exporta dados, compacta, guarda e avisa.',
+      text:[
+'Atue como Engenheiro de Confiabilidade (SRE) Sênior.',
+'',
+'Contexto: precisamos de uma rotina diária para a base [NOME DO BANCO OU API].',
+'',
+'Objetivo: especificar e implementar a rotina com as etapas: (1) exportar as coleções [LISTAR] em JSON, (2) compactar em arquivo nomeado com a data (backup_AAAA-MM-DD.zip), (3) enviar para [DESTINO, ex.: Google Drive], (4) manter apenas os últimos [N] dias, (5) enviar um resumo diário por [CANAL].',
+'',
+'Requisitos: credenciais somente por variáveis de ambiente; alerta imediato em caso de falha em qualquer etapa; log de cada execução; e um procedimento documentado de restauração com teste.',
+'',
+REGRA].join('\n') }
+  ]
+};
+
+/* ============ ESTADO ============ */
+const THEME = { 1:['#ff5a5f','#ff9a3c'], 2:['#22d3ee','#3b82f6'], 3:['#c084fc','#ec4899'], 4:['#4ade80','#a3e635'] };
+const LIC = { '1.1':'🩺','1.2':'🗺️','1.3':'💰','2.1':'🗃️','2.2':'⚖️','2.3':'📐','3.1':'🍽️','3.2':'🔔','3.3':'💬','4.1':'🏭','4.2':'🤖','4.3':'🌙' };
+const tstyle = id => '--c:' + THEME[id][0] + ';--c2:' + THEME[id][1];
+
+const KEY = 'portal-arquiteto-ia-v1';
+let S = { done:{}, cur:'1.1', view:'home' };
+let SESSION = {};
+let TB = { open:false, mod:1 };
+try { const raw = localStorage.getItem(KEY); if (raw) { const p = JSON.parse(raw); if (p && p.done) S = Object.assign(S, p); } } catch(e){}
+S.view = 'home';
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} }
+
+const FLAT = MODULES.flatMap(m => m.lessons.map(l => Object.assign({}, l, { mod:m.id })));
+const byId = id => FLAT.find(l => l.id === id);
+const modOf = id => MODULES.find(m => m.id === id);
+const idxOf = id => FLAT.findIndex(l => l.id === id);
+function unlocked(id){ const i = idxOf(id); for (let k=0;k<i;k++){ if(!S.done[FLAT[k].id]) return false; } return true; }
+function modDone(m){ return m.lessons.every(l => S.done[l.id]); }
+function modCount(m){ return m.lessons.filter(l => S.done[l.id]).length; }
+function modPct(m){ return Math.round(modCount(m) / m.lessons.length * 100); }
+function esc(s){ return s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+const $ = id => document.getElementById(id);
+function xp(){ return FLAT.filter(l => S.done[l.id]).length * 100 + MODULES.filter(modDone).length * 200; }
+function level(x){ return x >= 1500 ? 'Arquiteto' : x >= 900 ? 'Projetista' : x >= 300 ? 'Analista' : 'Aprendiz'; }
+const reduced = () => window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ============ RENDER ============ */
+function renderSidebar(){
+  $('sb').innerHTML = `<button class="homebtn ${S.view==='home'?'cur':''}" data-act="home"><span class="hi">🏠</span>Início</button>` +
+  MODULES.map(m => {
+    const done = modDone(m), open = unlocked(m.lessons[0].id);
+    const status = done ? 'Concluído' : (open ? modCount(m) + ' de ' + m.lessons.length + ' lições' : 'Bloqueado');
+    const tool = `<button class="modtool" data-act="tool" data-mod="${m.id}" ${done?'':'disabled'} title="${done?'Abrir prompts do módulo':'Conclua o módulo para liberar'}" aria-label="Toolbox do módulo ${m.id}">${done?'🧰':'🔒'}</button>`;
+    return `<div class="mod" style="${tstyle(m.id)};--p:${modPct(m)}">
+      <div class="modh"><div class="ring"><span class="modic">${m.icon}</span></div>
+        <div class="modt">Módulo ${m.id}: ${m.title}<div class="mods">${status}</div></div>${tool}</div>
+      ${m.lessons.map(l => {
+        const d = S.done[l.id], ok = unlocked(l.id), cur = S.cur === l.id && S.view === 'lesson';
+        const st = d ? '✅' : (ok ? '▶️' : '🔒');
+        return `<button class="les ${cur?'cur':''}" data-act="go" data-id="${l.id}" ${ok?'':'disabled'}><span class="st">${st}</span><span>${l.id} ${l.title}</span></button>`;
+      }).join('')}
+    </div>`;
+  }).join('') + `<button class="reset" data-act="reset">Reiniciar meu progresso</button>`;
+}
+
+function renderProgress(){
+  const total = FLAT.length, n = FLAT.filter(l => S.done[l.id]).length;
+  $('pb').style.width = Math.round(n/total*100) + '%';
+  $('pl').textContent = n + ' de ' + total + ' lições';
+  $('pb-wrap').setAttribute('aria-valuenow', Math.round(n/total*100));
+  const on = (id, v) => $(id).classList.toggle('on', v);
+  on('bn-home', S.view !== 'lesson'); on('bn-menu', S.view === 'lesson'); on('bn-tool', TB.open);
+}
+
+function countUp(el, to){
+  if (reduced()) { el.textContent = to + '%'; return; }
+  const t0 = performance.now();
+  (function f(t){ const k = Math.min(1,(t-t0)/1100); el.textContent = Math.round(to*(1-Math.pow(1-k,3))) + '%'; if (k<1) requestAnimationFrame(f); })(t0);
+}
+
+function renderHome(){
+  const total = FLAT.length, n = FLAT.filter(l => S.done[l.id]).length, pct = Math.round(n/total*100), x = xp();
+  $('main').removeAttribute('style');
+  $('main').innerHTML = `<section class="hero">
+      <div><h1 class="hh">Arquiteto de Soluções com IA</h1>
+      <p class="hp">Do problema do cliente ao fluxo automatizado: 4 módulos práticos, com desafios e prompts prontos para o Cursor.</p>
+      <div class="chips"><span class="chip">⚡ ${x} XP</span><span class="chip">🏅 ${level(x)}</span><span class="chip">📘 ${n} de ${total} lições</span></div>
+      <button class="next" data-act="continue">${n===0?'Começar agora':(n===total?'Revisar o curso':'Continuar estudando')} ➜</button></div>
+      <div class="bigring" id="bigring"><div class="bigin"><b id="bignum">0%</b><span>concluído</span></div></div>
+    </section>
+    <div class="grid">${MODULES.map((m,i) => {
+      const lock = !unlocked(m.lessons[0].id), fin = modDone(m);
+      return `<div class="mc ${lock?'lock':''} ${fin?'fin':''}" role="button" tabindex="0" data-act="openmod" data-mod="${m.id}" style="${tstyle(m.id)};--d:${i*0.5}s">
+        <div class="mtile">${m.icon}</div>
+        <div><h3>Módulo ${m.id}</h3><div class="mt">${m.title}</div><div class="ms">${m.sub}</div></div>
+        <div class="mdots">${m.lessons.map(l => `<i class="${S.done[l.id]?'on':''}" title="${l.title}"></i>`).join('')}</div>
+        <div class="mfoot"><span>${modCount(m)} de ${m.lessons.length} lições</span><span class="mst">${fin?'✅ Concluído':lock?'🔒 Bloqueado':'▶ Abrir'}</span></div>
+      </div>`; }).join('')}</div>`;
+  setTimeout(() => { const r = $('bigring'); if (r) r.style.setProperty('--p', pct); }, 60);
+  countUp($('bignum'), pct);
+}
+
+function renderMain(keep){
+  const m = $('main');
+  if (S.view === 'home') { renderHome(); if (!keep) window.scrollTo(0,0); return; }
+  if (S.view === 'moduleDone') {
+    const mod = modOf(S.modDone || 1), next = MODULES.find(x => x.id === mod.id + 1);
+    m.setAttribute('style', tstyle(mod.id));
+    m.innerHTML = `<div class="crumb">Módulo ${mod.id}: ${mod.title}</div>
+      <div class="done-box"><div class="trophy">🏆</div>
+      <h2>${next ? 'Módulo ' + mod.id + ' concluído!' : 'Curso concluído!'}</h2>
+      <p>${MODDONE[mod.id]} Os prompts de escopo deste módulo foram liberados no Code Toolbox para você usar no Cursor.</p>
+      <div class="row"><button class="next alt" data-act="tool" data-mod="${mod.id}">🧰 Abrir Code Toolbox</button>
+      ${next ? `<button class="next" data-act="go" data-id="${next.lessons[0].id}" style="${tstyle(next.id)}">Ir para o Módulo ${next.id} ➜</button>` : `<button class="next" data-act="home">Voltar ao início</button>`}</div></div>`;
+    if (!keep) window.scrollTo(0,0); return;
+  }
+  const L = byId(S.cur), mod = modOf(L.mod);
+  m.setAttribute('style', tstyle(mod.id));
+  const lessonDots = mod.lessons.map(l => `<i class="${S.done[l.id]?'on':(l.id===L.id?'now':'')}"></i>`).join('');
+  const head = `<div class="lh"><button class="ltile" data-act="spin" aria-label="Ícone da lição">${LIC[L.id]}</button>
+    <div><div class="crumb">Módulo ${mod.id}: ${mod.title} · Lição ${L.id}${L.min?' · '+L.min+' min':''}</div><h1 class="h1">${L.title}</h1></div></div><div class="dots">${lessonDots}</div>`;
+  if (L.soon) {
+    m.innerHTML = head + `<div class="card soon"><div style="font-size:46px">🚧</div><h3>Conteúdo em construção</h3><p style="margin:6px auto 0">${L.teaser}</p></div>`;
+    if (!keep) window.scrollTo(0,0); return;
+  }
+  const ss = SESSION[L.id] || { tried:[] };
+  const solved = !!S.done[L.id];
+  const c = L.ch, letters = ['A','B','C'];
+  const opts = c.opts.map((o,i) => {
+    const tried = ss.tried.includes(i);
+    let cls = '', dis = '';
+    if (solved) { dis = 'disabled'; cls = o.ok ? 'right' : 'dim'; }
+    else if (tried) { dis = 'disabled'; cls = 'wrong' + (i === ss.last ? ' shake' : ''); }
+    return `<button class="opt ${cls}" data-act="ans" data-i="${i}" ${dis}><span class="l l${letters[i]}">${letters[i]}</span><span>${o.t}</span></button>`;
+  }).join('');
+  let fb = '';
+  if (solved) {
+    const right = c.opts.find(o => o.ok);
+    fb = `<div class="fb ok pop"><b>✅ Acertou, Arquiteto! +100 XP</b><span>${right.why}</span></div>`;
+  } else if (ss.tried.length) {
+    const last = c.opts[ss.tried[ss.tried.length-1]];
+    fb = `<div class="fb no pop"><b>❌ Ainda não.</b><span>${last.why} Tente outra alternativa.</span></div>`;
+  }
+  const i = idxOf(L.id), isLastOfMod = mod.lessons[mod.lessons.length-1].id === L.id;
+  let nav = '';
+  if (solved) {
+    if (isLastOfMod && modDone(mod)) nav = `<button class="next alt" data-act="finish" data-mod="${mod.id}">🎉 Concluir módulo e liberar Toolbox</button>`;
+    else if (FLAT[i+1]) nav = `<button class="next" data-act="next">Avançar para próxima lição ➜</button>`;
+  }
+  m.innerHTML = head + L.body.join('') + `<section class="os" aria-label="Desafio do cliente">
+      <div class="who">${c.who} diz:</div>
+      <div class="says">"${c.says}"</div>
+      <div class="q">${c.q}</div>
+      ${opts}
+      <div id="fb">${fb}</div>
+      ${nav}
+    </section>`;
+  if (L.id === '1.3') calc();
+  if (!keep) window.scrollTo(0,0);
+}
+
+function renderToolbox(){
+  const d = $('drawer');
+  const tabs = MODULES.map(m => {
+    const ok = modDone(m);
+    return `<button class="tab ${TB.mod===m.id?'on':''}" style="${tstyle(m.id)}" data-act="tbmod" data-mod="${m.id}" ${ok?'':'disabled'}>${ok?m.icon+' ':'🔒 '}Módulo ${m.id}</button>`;
+  }).join('');
+  const mod = modOf(TB.mod);
+  let body;
+  if (!modDone(mod) || !PROMPTS[mod.id]) {
+    body = `<div class="lockmsg"><div style="font-size:40px">🔒</div><p>Conclua todas as lições do módulo para liberar os prompts de escopo.</p></div>`;
+  } else {
+    body = `<div style="${tstyle(mod.id)}"><p style="margin:0 0 14px; color:var(--muted); font-size:14px">Troque o que está entre [COLCHETES] pelos dados do seu caso e cole no Cursor. Cada prompt já inclui a regra de execução em etapas isoladas, para não mexer no que já foi validado.</p>` +
+      PROMPTS[mod.id].map((p,k) => `<div class="pr"><div class="prh"><b>${p.title}</b><button class="cp" data-act="copy" data-k="${k}">Copiar</button></div><div class="prd">${p.desc}</div><pre>${esc(p.text)}</pre></div>`).join('') + `</div>`;
+  }
+  d.innerHTML = `<div class="dh"><h2>🧰 Code Toolbox</h2><button class="x" data-act="toolclose" aria-label="Fechar">✕</button></div>
+    <div class="tabs">${tabs}</div><div class="db">${body}</div>`;
+  d.classList.toggle('on', TB.open); $('shade').classList.toggle('on', TB.open);
+}
+
+function calc(){
+  const g = id => parseFloat($(id).value);
+  const p=g('c-p'), h=g('c-h'), dd=g('c-d'), v=g('c-v'), k=g('c-k');
+  const brl = n => n.toLocaleString('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0});
+  $('o-p').textContent = p; $('o-h').textContent = String(h).replace('.',','); $('o-d').textContent = dd;
+  $('o-v').textContent = brl(v); $('o-k').textContent = brl(k);
+  const hm = p*h*dd*4.33, eco = hm*v, pay = eco>0 ? k/eco : 0;
+  $('r-h').textContent = hm.toLocaleString('pt-BR',{maximumFractionDigits:0}) + ' h';
+  $('r-e').textContent = brl(eco);
+  $('r-p').textContent = pay.toLocaleString('pt-BR',{maximumFractionDigits:1}) + ' meses';
+}
+
+function renderAll(keep){ renderSidebar(); renderProgress(); renderMain(keep); renderToolbox(); }
+
+/* ============ EFEITOS ============ */
+function confetti(){
+  if (reduced()) return;
+  const cv = document.createElement('canvas'); cv.className = 'confetti'; cv.width = innerWidth; cv.height = innerHeight;
+  document.body.appendChild(cv); const g = cv.getContext('2d');
+  const cols = ['#ff5a5f','#fbbf24','#4ade80','#22d3ee','#c084fc','#ec4899'];
+  const P = Array.from({length:130}, () => ({ x:innerWidth/2 + (Math.random()-.5)*220, y:innerHeight*0.62, vx:(Math.random()-.5)*15, vy:-Math.random()*17-4, s:5+Math.random()*6, c:cols[(Math.random()*cols.length)|0], r:Math.random()*6, vr:(Math.random()-.5)*.4 }));
+  let t = 0;
+  (function f(){
+    g.clearRect(0,0,cv.width,cv.height);
+    P.forEach(p => { p.vy += .45; p.x += p.vx; p.y += p.vy; p.r += p.vr; g.save(); g.translate(p.x,p.y); g.rotate(p.r); g.fillStyle = p.c; g.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6); g.restore(); });
+    if (++t < 120) requestAnimationFrame(f); else cv.remove();
+  })();
+}
+let toastT;
+function toast(msg){ const t = $('toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 2400); }
+
+/* ============ AÇÕES ============ */
+function closeMenu(){ $('sb').classList.remove('on'); $('ov').classList.remove('on'); }
+function goLesson(id){ S.cur = id; S.view = 'lesson'; save(); closeMenu(); renderAll(); }
+function copyText(txt, btn){
+  const ok = () => { btn.textContent = 'Copiado ✓'; btn.classList.add('done'); setTimeout(()=>{ btn.textContent='Copiar'; btn.classList.remove('done'); }, 1800); };
+  const fallback = () => { try { const t = document.createElement('textarea'); t.value = txt; t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t); ok(); } catch(e){ btn.textContent='Selecione e copie'; } };
+  try { navigator.clipboard.writeText(txt).then(ok, fallback); } catch(e){ fallback(); }
+}
+
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-act]'); if (!t) return;
+  const a = t.dataset.act;
+  if (a === 'menu') { $('sb').classList.toggle('on'); $('ov').classList.toggle('on'); }
+  else if (a === 'home') { S.view = 'home'; closeMenu(); renderAll(); }
+  else if (a === 'continue') { const nx = FLAT.find(l => !S.done[l.id]) || FLAT[0]; goLesson(nx.id); }
+  else if (a === 'openmod') {
+    const m = modOf(parseInt(t.dataset.mod,10));
+    if (!unlocked(m.lessons[0].id)) { toast('🔒 Conclua o módulo anterior para liberar este'); return; }
+    const nx = m.lessons.find(l => !S.done[l.id] && unlocked(l.id)) || m.lessons[0];
+    goLesson(nx.id);
+  }
+  else if (a === 'go') { const id = t.dataset.id; if (unlocked(id)) goLesson(id); }
+  else if (a === 'spin') { t.classList.remove('spin'); void t.offsetWidth; t.classList.add('spin'); setTimeout(() => t.classList.remove('spin'), 750); }
+  else if (a === 'ans') {
+    const L = byId(S.cur), i = parseInt(t.dataset.i,10);
+    const ss = SESSION[L.id] = SESSION[L.id] || { tried:[] };
+    if (L.ch.opts[i].ok) {
+      S.done[L.id] = true; save(); renderAll(true); confetti();
+      const mod = modOf(L.mod); if (modDone(mod)) toast('🏆 Módulo ' + mod.id + ' completo! Toolbox liberado');
+    } else { if (!ss.tried.includes(i)) ss.tried.push(i); ss.last = i; renderMain(true); }
+    const fb = $('fb'); if (fb && fb.scrollIntoView) fb.scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth', block:'center' });
+  }
+  else if (a === 'next') { const i = idxOf(S.cur); if (FLAT[i+1]) goLesson(FLAT[i+1].id); }
+  else if (a === 'finish') { S.view = 'moduleDone'; S.modDone = parseInt(t.dataset.mod,10); save(); renderAll(); confetti(); }
+  else if (a === 'tool') {
+    const m = t.dataset.mod ? parseInt(t.dataset.mod,10) : null;
+    if (m) TB.mod = m;
+    else { const last = MODULES.filter(modDone).pop(); if (!last) { toast('🔒 Conclua o Módulo 1 para liberar o Toolbox'); return; } TB.mod = last.id; }
+    TB.open = true; closeMenu(); renderToolbox(); renderProgress();
+  }
+  else if (a === 'toolclose') { TB.open = false; renderToolbox(); renderProgress(); }
+  else if (a === 'tbmod') { TB.mod = parseInt(t.dataset.mod,10); renderToolbox(); }
+  else if (a === 'copy') { const k = parseInt(t.dataset.k,10); copyText(PROMPTS[TB.mod][k].text, t); }
+  else if (a === 'reset') { if (confirm('Apagar todo o seu progresso?')) { S = { done:{}, cur:'1.1', view:'home' }; SESSION = {}; TB = { open:false, mod:1 }; save(); renderAll(); } }
+});
+document.addEventListener('input', e => { if (e.target.id && e.target.id.indexOf('c-') === 0) calc(); });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { TB.open = false; renderToolbox(); renderProgress(); closeMenu(); }
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.getAttribute && e.target.getAttribute('role') === 'button') { e.preventDefault(); e.target.click(); }
+});
+
+if (!byId(S.cur) || !unlocked(S.cur)) S.cur = '1.1';
+renderAll();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); });
+}
+</script>
+</body>
+</html>

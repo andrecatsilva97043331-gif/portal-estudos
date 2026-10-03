@@ -82,6 +82,8 @@ button{font-family:inherit; cursor:pointer;}
 .les.cur{background:color-mix(in srgb,var(--c) 18%,#000); border-left-color:var(--c); font-weight:600;}
 .les .st{flex:none; width:22px; text-align:center;}
 .reset{margin-top:10px; width:100%; border:1px solid var(--line); background:transparent; color:var(--muted); border-radius:10px; padding:7px; font-size:12px;}
+.syncrow{display:flex; gap:8px;}
+.syncrow .reset{flex:1;}
 
 /* ---------- Início ---------- */
 .main{min-width:0;}
@@ -818,7 +820,8 @@ function renderSidebar(){
         return `<button class="les ${cur?'cur':''}" data-act="go" data-id="${l.id}" ${ok?'':'disabled'}><span class="st">${st}</span><span>${l.id} ${l.title}</span></button>`;
       }).join('')}
     </div>`;
-  }).join('') + `<button class="reset" data-act="reset">Reiniciar meu progresso</button>`;
+  }).join('') + `<div class="syncrow"><button class="reset" data-act="syncsend">📤 Enviar progresso</button><button class="reset" data-act="syncrecv">📥 Receber progresso</button></div>
+  <button class="reset" data-act="reset">Reiniciar meu progresso</button>`;
 }
 
 function renderProgress(){
@@ -976,6 +979,31 @@ function copyText(txt, btn){
   try { navigator.clipboard.writeText(txt).then(ok, fallback); } catch(e){ fallback(); }
 }
 
+/* ============ TRANSFERIR PROGRESSO ============ */
+function syncLink(){
+  const ids = FLAT.filter(l => S.done[l.id]).map(l => l.id).join('_');
+  return location.origin + location.pathname + '#sync=' + ids + '&cur=' + S.cur;
+}
+function importSync(txt){
+  const m = /sync=([\d._]*)(?:&cur=([\d.]+))?/.exec(txt || '');
+  if (!m) return false;
+  const ids = m[1].split('_').filter(byId);
+  const novas = ids.filter(id => !S.done[id]);
+  if (!novas.length) { toast('Você já tem todo esse progresso ✓'); return true; }
+  if (!confirm('Importar ' + novas.length + ' lição(ões) concluída(s) de outro aparelho?')) return true;
+  ids.forEach(id => { S.done[id] = true; });
+  if (m[2] && byId(m[2]) && unlocked(m[2])) S.cur = m[2];
+  save(); renderAll(); toast('✅ Progresso importado');
+  return true;
+}
+function sendSync(){
+  const url = syncLink();
+  if (navigator.share) { navigator.share({ title:'Meu progresso · Portal de Estudos', text:'Abra este link no outro aparelho para continuar de onde parei:', url }).catch(() => {}); return; }
+  const done = () => toast('🔗 Link copiado: abra no outro aparelho');
+  try { navigator.clipboard.writeText(url).then(done, () => prompt('Copie este link e abra no outro aparelho:', url)); }
+  catch(e){ prompt('Copie este link e abra no outro aparelho:', url); }
+}
+
 document.addEventListener('click', e => {
   const t = e.target.closest('[data-act]'); if (!t) return;
   const a = t.dataset.act;
@@ -1010,6 +1038,8 @@ document.addEventListener('click', e => {
   else if (a === 'toolclose') { TB.open = false; renderToolbox(); renderProgress(); }
   else if (a === 'tbmod') { TB.mod = parseInt(t.dataset.mod,10); renderToolbox(); }
   else if (a === 'copy') { const k = parseInt(t.dataset.k,10); copyText(PROMPTS[TB.mod][k].text, t); }
+  else if (a === 'syncsend') sendSync();
+  else if (a === 'syncrecv') { const txt = prompt('Cole aqui o link de progresso gerado no outro aparelho:'); if (txt && !importSync(txt)) toast('Link inválido'); }
   else if (a === 'reset') { if (confirm('Apagar todo o seu progresso?')) { S = { done:{}, cur:'1.1', view:'home' }; SESSION = {}; TB = { open:false, mod:1 }; save(); renderAll(); } }
 });
 document.addEventListener('input', e => { if (e.target.id && e.target.id.indexOf('c-') === 0) calc(); });
@@ -1020,6 +1050,11 @@ document.addEventListener('keydown', e => {
 
 if (!byId(S.cur) || !unlocked(S.cur)) S.cur = '1.1';
 renderAll();
+if (location.hash.indexOf('sync=') >= 0) {
+  const h = location.hash;
+  history.replaceState(null, '', location.pathname);
+  setTimeout(() => importSync(h), 300);
+}
 </script>
 <script>
 if ('serviceWorker' in navigator) {

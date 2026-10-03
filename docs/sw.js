@@ -1,6 +1,6 @@
 // Service Worker: faz o app abrir offline.
 // Ao publicar uma versão nova, troque o número em VERSION para forçar atualização.
-const VERSION = 'portal-ia-v3';
+const VERSION = 'portal-ia-v4';
 const SHELL = [
   './', './index.html', './manifest.webmanifest',
   './icons/icon-192.png', './icons/icon-512.png',
